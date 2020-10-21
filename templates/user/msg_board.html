@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% block title %}
+    留言板
+{% endblock %}
+{% block styles %}
+    {{ super() }}
+    <style>
+        #container {
+            padding-top: 30px;
+            width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+            background-color: rgba(131, 202, 227, 0.7);;
+        }
+
+        #msgs {
+            margin-bottom: 20px;
+        }
+
+        #msgs p {
+            font-size: 16px;
+            color: white;
+        }
+
+    </style>
+{% endblock %}
+
+{% block newcontent %}
+    <div id="container">
+        <div id="msgs">
+            {% if boards %}
+                {% for board in boards.items %}
+                    <div class="item">
+                        <div id="item_left">
+                            <img src="{% if board.user.icon %} {{ url_for('static', filename=board.user.icon) }}
+                            {% else %}{{ url_for('static',filename='images/touxiang.png') }} {% endif %}" alt="">
+                        </div>
+                        <div id="item_right">
+                            <p>
+                                <span>{% if not board.user_id %}匿名用户{% else %}{{ board.user.username }}{% endif %}</span>
+                                <span>{{ board.mdatetime }}</span>
+                            </p>
+                            <p>
+                                {{ board.content }}
+                            </p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                还没有任何留言，快来占个座位吧~~~
+            {% endif %}
+        </div>
+
+        <div id="paginate">
+                    <nav aria-label="...">
+                        <ul class="pager">
+                            <li class="previous {% if not boards.has_prev %}disabled{% endif %}"><a href="{{ url_for('user.show_board') }}?page={{ boards.prev_num }}"><span aria-hidden="true">&larr;</span> Older</a>
+                            </li>
+                            <li class="next {% if not boards.has_next %}disabled{% endif %}"><a href="{{ url_for('user.show_board') }}?page={{ boards.next_num }}">Newer <span aria-hidden="true">&rarr;</span></a></li>
+                        </ul>
+                    </nav>
+
+        </div>
+
+        <hr>
+        <form action="{{ url_for('user.show_board') }}" method="post" enctype="multipart/form-data">
+            <p>
+                        <textarea name="board" class="mytextarea">
+
+                        </textarea>
+            </p>
+            <p></p>
+            <p style="text-align: right;">
+                <button type="submit" class="btn btn-primary">发表留言</button>
+            </p>
+
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="{{ url_for('static',filename='js/board.js') }}"></script>
+{% endblock %}
